@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
 int boardSize = 10;
 int Repetitions = 10000;
@@ -22,7 +23,14 @@ int rollDie(){
 	return diceroll;
 };
 
-int main(){		
+int main(){	
+
+	FILE * fp;
+
+	fp = fopen("hash.txt", "w+");
+	fprintf(fp, "Hello, I'm a PC!");
+
+	fclose(fp);
 	
 	time_t t;
 	srand((unsigned)time(&t));
@@ -36,9 +44,9 @@ int main(){
 		while (position <= 10 && dieRolls < 10000){
 			//While position = n-6
 			while (position <= 5 && dieRolls < 10000){
-				newPosition = position + rollDie();
-				position = newPosition + gameBoard[position];
-				gameSquareCounter[newPosition]++;
+				position = position + rollDie();
+				position = position + gameBoard[position];
+				gameSquareCounter[position]++;
 				dieRolls++;
 			}
 			//Ensure the user never goes over 100
@@ -47,7 +55,7 @@ int main(){
 				newPosition = position;
 			}
 			else {
-				position = newPosition + gameBoard[position];
+				newPosition = newPosition + gameBoard[newPosition];
 			}
 			gameSquareCounter[newPosition]++;
 			dieRolls++;
