@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <time.h>
-#include <stdlib.h>
 
 int repetitions = 10000;
 int boardLength = 101;
@@ -35,7 +34,9 @@ int dieRollHistory[100] = { 0 };
 int minRolls = 0;
 int i = 0;
 int k = 0;
-int dieRolls[5] = { 0 };
+int common = 0;
+int dieRolls = 0;
+int r = 0;
 
 int rollDie(){
 	//Roll DICE
@@ -51,57 +52,62 @@ int initGameBoard(){
 	}
 }
 
+int playGame() {
+	//The game
+	while (position < 100 && dieRolls < 10000){
+		//While position = n-6
+		while (position <= 94 && dieRolls < 10000){
+			position = rollDie(1000) + gameBoard[position] + position;
+			gameSquareCounter[position]++;
+			if (r <= minRolls){
+				tempRollHistory[r] = newPosition;
+			};
+			dieRolls++;
+			r++;
+		};
+		newPosition = position + rollDie();
+
+		//Ensure the user never goes over 100
+		if (newPosition <= 100){
+			position = newPosition + gameBoard[newPosition];
+		};
+
+		gameSquareCounter[position]++;
+		if (r <= minRolls){
+			rollHistory[r] = position;
+		};
+		dieRolls++;
+	};
+}
+
 int main(){	
-
+	//Add snakes and ladders to gameBoard awway
 	initGameBoard();
-
+	//Initilise Seed
 	time_t t;
 	srand((unsigned)time(&t));
 
-	while (k <= 1000){
-
-		int dieRolls = 0;
-		int r = 0;
-		int path[1000] = { 0 };
-
-		while (position <= 100 && dieRolls < 10000){
-			//While position = n-6
-			while (position <= 94 && dieRolls < 10000){
-				position = position + rollDie(1000);
-				position = position + gameBoard[position];
-				gameSquareCounter[position]++;
-				if (r <= minRolls){
-					tempRollHistory[r] = newPosition;
-				};
-				dieRolls++;
-				r++;
-			};
-			//Ensure the user never goes over 100
-			newPosition = position + rollDie();
-
-			if (newPosition < 100){
-				position = newPosition + gameBoard[newPosition];
-			};
-
-			gameSquareCounter[position]++;
-			if (r <= minRolls){
-				rollHistory[r] = position;
-			};
-			dieRolls++;
-		};
-
+	//Play Game 1000000 time
+	while (k <= 1000000){
+		//reset game variables
+		dieRolls = 0;
+		r = 0;
+		position = 0;
+		//Play Game
+		playGame();
+		//Check if new minRolls exists
 		if (dieRolls < minRolls || minRolls == 0){
 			minRolls = dieRolls;
 		};
-
-
-		int common = 0;
-		for (i = 0; i <= 10; i = i + 3){
-			if (gameSquareCounter[i] > common){
-				common = gameSquareCounter[i];
-			};
-		};
+		//Increment turn counter
 		k++;
+	};
+
+	//Find most popular Square
+	for (i = 0; i <= 100; i++){
+		if (gameSquareCounter[i] > gameSquareCounter[common]){
+			common = i;
+		};
 	};
 
 	return 0;
