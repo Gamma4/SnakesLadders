@@ -57,7 +57,8 @@ int playGame() {
 	while (position < 100 && dieRolls < 10000){
 		//While position = n-6
 		while (position <= 94 && dieRolls < 10000){
-			position = rollDie(1000) + gameBoard[position] + position;
+			position = position + rollDie();
+			position = position + gameBoard[position];
 			gameSquareCounter[position]++;
 			if (r <= minRolls){
 				tempRollHistory[r] = newPosition;
@@ -88,7 +89,7 @@ int main(){
 	srand((unsigned)time(&t));
 
 	//Play Game 1000000 time
-	while (k <= 1000000){
+	while (k <= 6000){
 		//reset game variables
 		dieRolls = 0;
 		r = 0;
