@@ -2,11 +2,14 @@
 #include <time.h>
 #include <stdlib.h>
 
-int boardSize = 10;
-int Repetitions = 10000;
-int position = -1;
+int repetitions = 10000;
+int boardLength = 101;
+int position = 0;
 int newPosition = 0;
+int tempRollHistory[1000];
+int rollHistory[1000];
 int gameBoard[101] = { 0 };
+int gameSquareCounter[101] = { 0 };
 int snakesLadders[19][2] = {
 	{ 1, 37 },
 	{ 4, 10 },
@@ -17,7 +20,7 @@ int snakesLadders[19][2] = {
 	{ 51, 16 },
 	{ 71, 20 },
 	{ 80, 20 },
-	{ 87, 63 }, 
+	{ 87, -63 }, 
 	{ 16, -10 },
 	{ 47, -26 },
 	{ 49, -38 },
@@ -28,9 +31,8 @@ int snakesLadders[19][2] = {
 	{ 95, -20 },
 	{ 98, -20 },
 };
-int gameSquareCounter[10] = { 0 };
-int dieRollHistory[10] = { 0 };
-int minRolls = 1000;
+int dieRollHistory[100] = { 0 };
+int minRolls = 0;
 int i = 0;
 int k = 0;
 int dieRolls[5] = { 0 };
@@ -56,42 +58,51 @@ int main(){
 	time_t t;
 	srand((unsigned)time(&t));
 
-	while (k <= 100000){
+	while (k <= 1000){
 
 		int dieRolls = 0;
+		int r = 0;
 		int path[1000] = { 0 };
 
-		while (position <= 10 && dieRolls < 10000){
+		while (position <= 100 && dieRolls < 10000){
 			//While position = n-6
-			while (position <= 5 && dieRolls < 10000){
+			while (position <= 94 && dieRolls < 10000){
 				position = position + rollDie(1000);
 				position = position + gameBoard[position];
 				gameSquareCounter[position]++;
+				if (r <= minRolls){
+					tempRollHistory[r] = newPosition;
+				};
 				dieRolls++;
-			}
+				r++;
+			};
 			//Ensure the user never goes over 100
 			newPosition = position + rollDie();
-			if (newPosition > 10){
-				newPosition = position;
-			}
-			else {
-				newPosition = newPosition + gameBoard[newPosition];
-			}
-			gameSquareCounter[newPosition]++;
+
+			if (newPosition < 100){
+				position = newPosition + gameBoard[newPosition];
+			};
+
+			gameSquareCounter[position]++;
+			if (r <= minRolls){
+				rollHistory[r] = position;
+			};
 			dieRolls++;
-		}
+		};
 
-		if (dieRolls < minRolls){
+		if (dieRolls < minRolls || minRolls == 0){
 			minRolls = dieRolls;
-		}
+		};
 
-		dieRollHistory[k] = dieRolls;
 
 		int common = 0;
-		for (i = 0; i <= 10; i++){
+		for (i = 0; i <= 10; i = i + 3){
 			if (gameSquareCounter[i] > common){
 				common = gameSquareCounter[i];
-			}
-		}
-	}
+			};
+		};
+		k++;
+	};
+
+	return 0;
 };
