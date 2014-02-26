@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 
-int repetitions = 10000;
+int repetitions = 1000000;
 int boardLength = 101;
 int position = 0;
 int newPosition = 0;
@@ -30,19 +30,25 @@ int snakesLadders[19][2] = {
 	{ 95, -20 },
 	{ 98, -20 },
 };
-int dieRollHistory[100] = { 0 };
 int minRolls = 0;
 int i = 0;
 int k = 0;
 int common = 0;
+int uncommon = 0;
 int dieRolls = 0;
+int dieRollsAdder = 0;
+int meanDieRolls = 0;
 int r = 0;
+int dieRollHistory[6] = { 0 };
+int probabilitySquareC = 0;
+int probabilitySquareD = 0;
 
 int rollDie(){
 	//Roll DICE
 	int diceroll;
 	/* Intializes random number generator */	
 	diceroll = rand() % 6 + 1;
+	dieRollHistory[diceroll - 1]++;
 	return diceroll;
 };
 
@@ -64,6 +70,7 @@ int playGame() {
 				tempRollHistory[r] = newPosition;
 			};
 			dieRolls++;
+			dieRollsAdder++;
 			r++;
 		};
 		newPosition = position + rollDie();
@@ -71,13 +78,14 @@ int playGame() {
 		//Ensure the user never goes over 100
 		if (newPosition <= 100){
 			position = newPosition + gameBoard[newPosition];
+			gameSquareCounter[position]++;
 		};
 
-		gameSquareCounter[position]++;
 		if (r <= minRolls){
 			rollHistory[r] = position;
 		};
 		dieRolls++;
+		dieRollsAdder++;
 	};
 }
 
@@ -89,7 +97,7 @@ int main(){
 	srand((unsigned)time(&t));
 
 	//Play Game 1000000 time
-	while (k <= 6000){
+	while (k < repetitions){
 		//reset game variables
 		dieRolls = 0;
 		r = 0;
@@ -109,7 +117,15 @@ int main(){
 		if (gameSquareCounter[i] > gameSquareCounter[common]){
 			common = i;
 		};
+		if (gameSquareCounter[i] < gameSquareCounter[uncommon] && gameSquareCounter[i] != 0 || gameSquareCounter[uncommon] == 0){
+			uncommon = i;
+		}
 	};
+
+	probabilitySquareC = gameSquareCounter[common] * 100 / repetitions;
+	probabilitySquareD = gameSquareCounter[uncommon] * 100 / repetitions;
+	//Find mean value
+	meanDieRolls = dieRollsAdder / repetitions;
 
 	return 0;
 };
