@@ -122,8 +122,8 @@ int main(){
 		}
 	};
 
-	probabilitySquareC = gameSquareCounter[common] * 100 / repetitions;
-	probabilitySquareD = gameSquareCounter[uncommon] * 100 / repetitions;
+	probabilitySquareC = gameSquareCounter[common] * 100 / dieRollsAdder;
+	probabilitySquareD = gameSquareCounter[uncommon] * 100 / dieRollsAdder;
 	//Find mean value
 	meanDieRolls = dieRollsAdder / repetitions;
 
